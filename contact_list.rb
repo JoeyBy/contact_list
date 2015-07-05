@@ -1,74 +1,51 @@
 require_relative 'contact'
 require_relative 'contact_database'
-# require 'csv'
-
-joey = Contact.create("joey dude","asbcdasf@gmail.com")
-bob = Contact.create("bob johnson", "12345@hotmail.com")
-susan = Contact.create("Susan broseph", "fishsifh@gmail.com")
-
-
-# puts bob
-
-puts Contact.all
-
-puts Contact.show(3)
-
 
 # TODO: Implement command line interaction
 # This should be the only file where you use puts and gets
-# user = ARGV.first
-# prompt = '~ '
 
-# puts "Welcome to Joey's awesome contact app..."
-# puts "Enter your input..."
-# print prompt
-# commands = STDIN.gets.chomp.downcase
+# jordan = Contact.create("Jordan Zhang", "teddybear@gmail.com")
+# joey = Contact.create("joey", "joey.byrne@gmail.com")
+# siv = Contact.create("Siv Padhy", "siv@gmail.com")
 
-# case commands
+case ARGV[0] 
 
-# when 'help'
-#   puts "Here is a list of available commands:"
-#   puts "     new - Create a new contact"
-#   puts "     list - List all contacts"
-#   puts "     show - Show a contact"
-#   puts "     find - Find a contact"
+when 'help'
+  puts "Here is a list of available commands:"
+  puts "new  - Create a new contact"
+  puts "list - List all contacts"
+  puts "show - Show a contact"
+  puts "find - Find a contact"
 
-# when 'new'
-#   puts "You want to create a contact"
-#   Contact.create
-# when 'list'
-#   puts "You want to list all contacts"
+when 'new'
+  puts "Enter a name"
+  name = STDIN.gets.chomp.to_s
+  puts "Enter an email"
+  email = STDIN.gets.chomp.to_s
+  puts "Enter a phone number"
+  phone_number = STDIN.gets.chomp.to_s
+  # unless Contact.find(email)
+  #   puts "contact already exists"
+  # else
+  Contact.create(name, email, phone_number)
+  puts "Contact created!"
+  # end
 
-# when 'show'
-#   puts "You want to show a specific contact"
+when 'list'
+  puts "List all contacts"
+  Contact.all
 
-# when 'find'
-#   puts "You want to find a contact"
+when 'show'
+  id = ARGV[1].to_i
+  puts Contact.show(id)
 
-# else
-#   puts "I don't understand..."
-
-# end
-
-
-# puts "What kind of computer do you have?"
-# print prompt
-# computer = STDIN.gets.chomp
-
-# puts <<MESSAGE
-# Alright, so you said #{likes} about liking me.
-# You live in #{lives}.  Not sure where that is.
-# And you have a #{computer} computer.  Nice.
-# MESSAGE
-
-# customers = CSV.read('database.csv')
-# # puts customers
-
-# puts customers
+when 'find'
+  term = ARGV[1]
+  puts Contact.find(term)
+  puts "You searched for " + term + ":"
 
 
-# test_arr = CSV.foreach('database.csv') do |row|
-#   puts row.inspect
-# end
+else
+  puts "I don't understand."
 
-# test_arr
+end
