@@ -54,7 +54,7 @@ when 'find-first'
 
 when 'find-email'
   term = ARGV[1]
-  display(Contact.find_all_by_email(term))
+  display(Contact.find_by email: term)
 
 else
   puts "I don't understand."
