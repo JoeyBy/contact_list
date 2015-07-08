@@ -21,6 +21,7 @@ when 'help'
   puts "find-last - finds a contact by their last name"
   puts "find-first - finds a contact by their first name"
   puts "find-email - find a contact by their email"
+  puts "delete - delete a contact by their ID number"
 
 
 when 'new'
@@ -56,6 +57,11 @@ when 'find-email'
   term = ARGV[1]
   display(Contact.find_by email: term)
 
+when 'delete'
+  id = ARGV[1]
+  dead = Contact.find(id)
+  dead.destroy
+  
 else
   puts "I don't understand."
 
