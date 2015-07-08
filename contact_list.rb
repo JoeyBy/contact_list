@@ -28,8 +28,7 @@ when 'new'
   lastname = STDIN.gets.chomp
   puts "Enter their email address"
   email = STDIN.gets.chomp
-  temp = Contact.new(firstname, lastname, email)
-  temp.save
+  Contact.create(firstname: firstname,lastname: lastname,email: email)
   puts "Contact created!"
 
 when 'list'
