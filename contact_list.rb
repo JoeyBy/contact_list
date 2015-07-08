@@ -37,7 +37,7 @@ when 'list'
 
 when 'find-id'
   id = ARGV[1]
-  puts Contact.find(id)
+  display(Contact.find(id))
 
 when 'find-last'
   term = ARGV[1]
