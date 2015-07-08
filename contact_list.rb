@@ -1,13 +1,15 @@
 require_relative 'contact'
+require 'pry'
 
 def display(input)
-  input.each do |x|
-    puts "NAME: #{x.firstname} #{x.lastname}"
-    puts "EMAIL: #{x.email}"
-    puts "ID: #{x.id}"
+    puts "NAME: #{input.firstname} #{input.lastname}"
+    puts "EMAIL: #{input.email}"
+    puts "ID: #{input.id}"
     puts "-------------------"
-  end
 end
+
+
+
 
 case ARGV[0] 
 
@@ -33,7 +35,10 @@ when 'new'
 
 when 'list'
   puts "List all contacts"
-  display(Contact.all)
+  all_cont = Contact.all
+  all_cont.each do |word|
+    display(word)
+  end
 
 when 'find-id'
   id = ARGV[1]
@@ -41,11 +46,11 @@ when 'find-id'
 
 when 'find-last'
   term = ARGV[1]
-  display(Contact.find_all_by_lastname(term))
+  display(Contact.find_by lastname: term)
 
 when 'find-first'
   term = ARGV[1]
-  display(Contact.find_all_by_firstname(term))
+  display(Contact.find_by firstname: term)
 
 when 'find-email'
   term = ARGV[1]
