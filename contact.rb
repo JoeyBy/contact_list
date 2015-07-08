@@ -1,77 +1,91 @@
 require 'pry'
+require 'pg'
 
 class Contact
  
-  attr_accessor :name, :email, :id, :phone_number
+  attr_accessor :firstname, :lastname, :email
+  attr_reader :id
 
-  @@contacts_database = []
-
-  def initialize(name, email, phone_number, id)
-    @name = name.downcase
-    @email = email.downcase
-    @phone_number = phone_number
+  def initialize(firstname, lastname, email, id=nil)
+    @firstname = firstname
+    @lastname = lastname
+    @email = email
     @id = id
   end
- 
-  def to_s
-    # TODO: return string representation of Contact
-    "#{@id}, #{@name}, #{@email}, #{@phone_number}"
+
+  def save
+    sql = "INSERT INTO contacts(firstname, lastname, email)
+    VALUES ($1, $2, $3)"
+    self.class.connection.exec_params(sql, [@firstname, @lastname, @email])
+    puts "#{@firstname} #{@lastname} with an email #{@email} has been added"
   end
 
-  def to_a
-    [@id, @name, @email, @phone_number]
+class << self
+
+  def connection 
+    PG.connect(host: 'localhost',
+    dbname: 'contact_list',
+    user: 'development',
+    password: 'development')
   end
 
-  ## Class Methods
-
-    def self.populate_list
-      @id = 1
-      contacts = []
-      ContactDatabase.get_raw_data.each do |row|
-        if row[1] != nil && row[2] != nil
-          contacts << Contact.new(row[1], row[2], row[3], @id)
-          @id += 1
-        end
+  def all
+    pg_contact = []
+    var = connection.exec( "SELECT * FROM contacts" )
+      var.each do |row|
+        pg_contact << self.new(
+        row["firstname"],
+        row["lastname"],
+        row["email"],
+        row["id"])
       end
-      return contacts
-    end
+    pg_contact
+  end
 
-    def self.create(name, email, phone_number)
-      # TODO: Will initialize a contact as well as add it to the list of contacts
-      @@contacts_database = Contact.populate_list
-      @@contacts_database << Contact.new(name, email, phone_number, @@contacts_database.length + 1 )
-      ContactDatabase.rewrite_csv(@@contacts_database)    
+  def destroy(person)
+    sql = "DELETE FROM contacts WHERE id = ($1)"
+    connection.exec_params(sql, [person])
+  end
 
-    end
- 
-    def self.find(term)
-      # TODO: Will find and return contacts that contain the term in the first name, last name or email
-      @@contacts_database = Contact.populate_list
-      @@contacts_database.each do |contact|
-        # puts contact.to_s
-        if contact.to_s.include?(term)
-          return contact.to_s
-        end
-      end
-    end
- 
-    def self.all
-      # TODO: Return the list of contacts, as is
-      @@contacts_database = Contact.populate_list
-      @@contacts_database.each_with_index do |contact,index|
-        puts "#{index}: #{contact.name} (#{contact.email}) #{contact.phone_number}"
-      end
+  def find(contact_id)
+    sql = "SELECT * FROM contacts WHERE id = ($1)"
+    result = connection.exec_params(sql, [contact_id])
+    master_of_disaster(result)
+  end
 
-      # ContactDatabase.get_raw_data
-      # @@contacts_database
+  def find_all_by_lastname(contact_last)
+    sql = "SELECT * FROM contacts WHERE lastname = ($1)"
+    result = connection.exec_params(sql, [contact_last])
+    master_of_disaster(result)
+  end
+
+  def find_all_by_firstname(contact_first)
+    sql = "SELECT * FROM contacts WHERE firstname = ($1)"
+    result = connection.exec_params(sql, [contact_first])
+    master_of_disaster(result)
+  end
+
+  def find_all_by_email(contact_email)
+    sql = "SELECT * FROM contacts WHERE email = ($1)"
+    result = connection.exec_params(sql, [contact_email])
+    master_of_disaster(result)
+  end
+
+  def master_of_disaster(param)
+    pg_contact = []
+    param.each do |row|
+    pg_contact << self.new(
+      row["firstname"],
+      row["lastname"],
+      row["email"],
+      row["id"])
     end
-    
-    def self.show(id)
-      # TODO: Show a contact, based on ID
-      @@contacts_database = Contact.populate_list
-      @@contacts_database.detect do |contact|
-        contact.id == id
-      end
-    end    
+  pg_contact
+  end
+
 
 end
+end
+
+# Contact.all
+

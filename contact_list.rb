@@ -1,12 +1,14 @@
 require_relative 'contact'
 require_relative 'contact_database'
 
-# TODO: Implement command line interaction
-# This should be the only file where you use puts and gets
-
-# jordan = Contact.create("Jordan Zhang", "teddybear@gmail.com")
-# joey = Contact.create("joey", "joey.byrne@gmail.com")
-# siv = Contact.create("Siv Padhy", "siv@gmail.com")
+def display(input)
+  input.each do |x|
+    puts "NAME: #{x.firstname} #{x.lastname}"
+    puts "EMAIL: #{x.email}"
+    puts "ID: #{x.id}"
+    puts "-------------------"
+  end
+end
 
 case ARGV[0] 
 
@@ -14,36 +16,42 @@ when 'help'
   puts "Here is a list of available commands:"
   puts "new  - Create a new contact"
   puts "list - List all contacts"
-  puts "show - Show a contact"
-  puts "find - Find a contact"
+  puts "find-id - Finds a contact by ID"
+  puts "find-last - finds a contact by their last name"
+  puts "find-first - finds a contact by their first name"
+  puts "find-email - find a contact by their email"
+
 
 when 'new'
-  puts "Enter a name"
-  name = STDIN.gets.chomp.to_s
-  puts "Enter an email"
-  email = STDIN.gets.chomp.to_s
-  puts "Enter a phone number"
-  phone_number = STDIN.gets.chomp.to_s
-  # unless Contact.find(email)
-  #   puts "contact already exists"
-  # else
-  Contact.create(name, email, phone_number)
+  puts "Enter their first name"
+  firstname = STDIN.gets.chomp
+  puts "Enter their last name"
+  lastname = STDIN.gets.chomp
+  puts "Enter their email address"
+  email = STDIN.gets.chomp
+  temp = Contact.new(firstname, lastname, email)
+  temp.save
   puts "Contact created!"
-  # end
 
 when 'list'
   puts "List all contacts"
-  Contact.all
+  display(Contact.all)
 
-when 'show'
-  id = ARGV[1].to_i
-  puts Contact.show(id)
+when 'find-id'
+  id = ARGV[1]
+  puts Contact.find(id)
 
-when 'find'
+when 'find-last'
   term = ARGV[1]
-  puts Contact.find(term)
-  puts "You searched for " + term + ":"
+  display(Contact.find_all_by_lastname(term))
 
+when 'find-first'
+  term = ARGV[1]
+  display(Contact.find_all_by_firstname(term))
+
+when 'find-email'
+  term = ARGV[1]
+  display(Contact.find_all_by_email(term))
 
 else
   puts "I don't understand."
