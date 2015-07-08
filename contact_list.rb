@@ -1,5 +1,4 @@
 require_relative 'contact'
-require_relative 'contact_database'
 
 def display(input)
   input.each do |x|
